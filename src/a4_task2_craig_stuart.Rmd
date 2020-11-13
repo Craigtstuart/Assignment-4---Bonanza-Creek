@@ -7,5 +7,42 @@ output: html_document
 
 ```{r setup, include=TRUE, warning=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+#attach all necessary packages
+library(tidyverse)
+library(here)
 ```
+
+#### Read in Bonanza Creek data
+```{r}
+bonanza_creek <- read_csv(here("data", "bonanza_hares.csv"))
+```
+
+## 1. Introduction
+- 4 - 5 sentence "mini-introduction" to what this study is exploring, including basic background information about the subject, site and study (with citations as needed), and a brief overview of what is included in the exploratory report.
+
+## 2. Data and Analyses
+- A 3 - 4 sentence section in which you briefly describe the data, including citation & credit as needed, and provide an overview of the main analysis, statistical methods and tools used
+
+## 3. Exploratory Findings
+
+### - Annual juvenile Snowshoe hare trap counts
+
+### - Visualize juvenile Snowshoe hare weights 
+
+### - Juvenile weight comparison
+
+### - Relationship between juvenile weight & hind foot length
+
+## 4. Summary
+- Include a very short summary describing your main findings from your juvenile hares exploration (bulletpoints are fine)
+
+## 5. Citations
+- Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER. 2017. Snowshoe hare physical data in Bonanza Creek Experimental Forest: 1999-Present ver 22. Environmental Data Initiative. https://doi.org/10.6073/pasta/03dce4856d79b91557d8e6ce2cbcdc14
+
+
+
+
+
+
 

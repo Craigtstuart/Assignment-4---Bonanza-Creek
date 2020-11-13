@@ -379,7 +379,71 @@ summary {
 </div>
 
 
-<pre class="r"><code>knitr::opts_chunk$set(echo = TRUE)</code></pre>
+<pre class="r"><code>knitr::opts_chunk$set(echo = TRUE)
+
+#attach all necessary packages
+library(tidyverse)
+library(here)</code></pre>
+<div id="read-in-bonanza-creek-data" class="section level4">
+<h4>Read in Bonanza Creek data</h4>
+<pre class="r"><code>bonanza_creek &lt;- read_csv(here(&quot;data&quot;, &quot;bonanza_hares.csv&quot;))</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   date = col_character(),
+##   time = col_logical(),
+##   grid = col_character(),
+##   trap = col_character(),
+##   l_ear = col_character(),
+##   r_ear = col_double(),
+##   sex = col_character(),
+##   age = col_character(),
+##   weight = col_double(),
+##   hindft = col_double(),
+##   notes = col_character(),
+##   b_key = col_double(),
+##   session_id = col_double(),
+##   study = col_character()
+## )</code></pre>
+</div>
+<div id="introduction" class="section level2">
+<h2>1. Introduction</h2>
+<ul>
+<li>4 - 5 sentence “mini-introduction” to what this study is exploring, including basic background information about the subject, site and study (with citations as needed), and a brief overview of what is included in the exploratory report.</li>
+</ul>
+</div>
+<div id="data-and-analyses" class="section level2">
+<h2>2. Data and Analyses</h2>
+<ul>
+<li>A 3 - 4 sentence section in which you briefly describe the data, including citation &amp; credit as needed, and provide an overview of the main analysis, statistical methods and tools used</li>
+</ul>
+</div>
+<div id="exploratory-findings" class="section level2">
+<h2>3. Exploratory Findings</h2>
+<div id="annual-juvenile-snowshoe-hare-trap-counts" class="section level3">
+<h3>- Annual juvenile Snowshoe hare trap counts</h3>
+</div>
+<div id="visualize-juvenile-snowshoe-hare-weights" class="section level3">
+<h3>- Visualize juvenile Snowshoe hare weights</h3>
+</div>
+<div id="juvenile-weight-comparison" class="section level3">
+<h3>- Juvenile weight comparison</h3>
+</div>
+<div id="relationship-between-juvenile-weight-hind-foot-length" class="section level3">
+<h3>- Relationship between juvenile weight &amp; hind foot length</h3>
+</div>
+</div>
+<div id="summary" class="section level2">
+<h2>4. Summary</h2>
+<ul>
+<li>Include a very short summary describing your main findings from your juvenile hares exploration (bulletpoints are fine)</li>
+</ul>
+</div>
+<div id="citations" class="section level2">
+<h2>5. Citations</h2>
+<ul>
+<li>Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER. 2017. Snowshoe hare physical data in Bonanza Creek Experimental Forest: 1999-Present ver 22. Environmental Data Initiative. <a href="https://doi.org/10.6073/pasta/03dce4856d79b91557d8e6ce2cbcdc14" class="uri">https://doi.org/10.6073/pasta/03dce4856d79b91557d8e6ce2cbcdc14</a></li>
+</ul>
+</div>
 
 
 
