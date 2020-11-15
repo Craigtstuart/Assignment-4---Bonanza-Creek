@@ -14,6 +14,7 @@ library(here)
 library(janitor)
 library(lubridate)
 library(knitr)
+library(effsize)
 ```
 
 #### Read in Bonanza Creek data
@@ -80,19 +81,6 @@ ggplot(data = j_weights_sex, aes(sample = weight)) +
   facet_wrap(~sex)
 ```
 
-- Summary statistics
-```{r}
-j_weights_sex %>% 
-  filter(weight != "NA") %>% 
-  group_by(sex) %>% 
-  summarize(
-    mean_weight = mean(weight),
-    median_weight = median(weight),
-    sd_weight = sd(weight),
-    sample_size = n()
-  )
-```
-
 - Juvenile hare weight vs. site(grid)
 
 ```{r}
@@ -108,22 +96,71 @@ ggplot(data = j_weight_grid, aes(sample = weight)) +
   geom_qq() +
   facet_wrap(~grid)
 ```
-- Summary statistics
-```{r}
-j_weight_grid %>% 
-  filter(weight != "NA") %>% 
-  group_by(grid) %>% 
-  summarize(
-    mean_weight = mean(weight),
-    median_weight = median(weight),
-    sd_weight = sd(weight),
-    sample_size = n()
-  )
-```
+
+- in 2 - 3 sentences below your visualization(s) describe in text the main takeaways that you would want the audience to understand from your figures.
 
 ### - Juvenile weight comparison
 
+- Summary statistics
+
+```{r}
+sex_weight_stat <- j_weights_sex %>% 
+  filter(weight != "NA") %>% 
+  group_by(sex) %>% 
+  summarize(
+    mean_weight = mean(weight),
+    sd_weight = sd(weight),
+    sample_size = n()
+  )
+
+kable(sex_weight_stat)
+```
+
+- t-test analysis
+
+```{r}
+m_weight <- j_weights_sex %>% 
+  filter(sex == "Male") %>% 
+  pull(weight)
+
+f_weight <- j_weights_sex %>% 
+  filter(weight != "NA") %>% 
+  filter(sex == "Female") %>% 
+  pull(weight)
+
+hare_weight_ttest <- t.test(m_weight, f_weight)
+hare_weight_ttest
+
+
+cohen.d(m_weight, f_weight)
+```
+
+- A 2 - 3 sentence comprehensive statement of the means comparison, including at least:
+The actual difference in means
+Effect size (Cohen's *d*)
+Outcome of a two-sample t-test
+
+
 ### - Relationship between juvenile weight & hind foot length
+
+- Explore the relationship between juvenile snowshoe hare hind foot length and weight
+
+```{r}
+footlength_weight <- bonanza_creek %>% 
+  select("age", "weight", "hindft") %>% 
+  filter(age == "j")
+
+
+ggplot(data = footlength_weight, aes(x = weight, y = hindft)) +
+  geom_point() +
+  labs(x = "Weight (g)", y = "Hind Foot Length (mm)", title = "Juvenile Hare Weight and High Foot Length Comparison")
+
+weight_hindft_lm <- lm(weight~hindft, data = footlength_weight)
+
+summary(weight_hindft_lm)
+```
+
+- In 2 - 3 sentences below your figure, describe the outcome of your linear regression exploration (e.g. slope interpretation, R2 value, and Pearson's r correlation) and touch briefly on which assumption(s) of linear regression may be a concern, and additional thoughts you have about how well (or not well…) the linear model describes the relationship. What worries you?
 
 ## 4. Summary
 - Include a very short summary describing your main findings from your juvenile hares exploration (bulletpoints are fine)
