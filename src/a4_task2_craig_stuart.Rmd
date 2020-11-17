@@ -15,6 +15,7 @@ library(janitor)
 library(lubridate)
 library(knitr)
 library(effsize)
+library(beeswarm)
 ```
 
 #### Read in Bonanza Creek data
@@ -72,7 +73,7 @@ j_weights_sex <- bonanza_creek %>%
     sex %in% "m" ~ "Male"))
 
 ggplot(data = j_weights_sex, aes(weight)) +
-  geom_histogram(bins = 20) +
+  geom_histogram(aes(fill = sex), bins = 20) +
   facet_wrap(~sex) +
   labs(x = "Weight (g)", y = "Count", title = "Juvenile Hare Weight Histogram Distribution by Sex")
 
@@ -89,7 +90,7 @@ j_weight_grid <- bonanza_creek %>%
   filter(age == "j")
 
 ggplot(data = j_weight_grid, aes(weight)) +
-  geom_histogram(bins = 20) +
+  geom_histogram(aes(fill = grid), bins = 20) +
   facet_wrap(~grid)
 
 ggplot(data = j_weight_grid, aes(sample = weight)) +
