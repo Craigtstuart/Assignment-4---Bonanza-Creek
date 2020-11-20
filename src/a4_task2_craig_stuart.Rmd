@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE, warning=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 
-#attach all necessary packages
+# attach all necessary packages
 
 library(tidyverse)
 library(here)
@@ -42,24 +42,24 @@ bonanza_creek <- read_csv(here("data", "bonanza_hares.csv"))
 # `filer()` for juvenile observations, `mutate()` the date to get a year variable, and summarize the `count()` by year
 
 juvenile_trap <- bonanza_creek %>% 
-  filter(age == "j") %>% 
-  mutate(date_new = mdy(date)) %>% 
-  mutate(year = year(date_new)) %>% 
-  count(year)
+  filter(age == "j") %>% #filter to match only juvenile observations
+  mutate(date_new = mdy(date)) %>% #reformat date as mdy
+  mutate(year = year(date_new)) %>% #add column with year only
+  count(year) #summarize counts per year
 ```
 
 ```{r}
 # Use `ggplot()` to visualize the absolute counts per year
 
 ggplot(data = juvenile_trap, aes(x = year, y = n)) +
-  geom_bar(stat = "identity", fill = "blue", color = "black") +
-  labs(x = "Study Year", 
+  geom_bar(stat = "identity", fill = "blue", color = "black") + #select bar graph and add aesthetics
+  labs(x = "Study Year", #add x, y, and title labels
        y = "Number of Counts", 
        title = "Annual Trap Counts") +
-  scale_y_continuous(breaks = seq(0,130,20)) +
-  scale_x_continuous(breaks = seq(1999, 2012, 1))+
-  theme_light() +
-  theme(plot.title = element_text(hjust = 0.5))
+  scale_y_continuous(breaks = seq(0,130,20)) + #adjust y axis values
+  scale_x_continuous(breaks = seq(1999, 2012, 1))+ #adjust x axis values
+  theme_light() + #choose theme
+  theme(plot.title = element_text(hjust = 0.5)) #center plot title
 ```
 
 **Figure 1**: Absolute trap counts of juvenile snowshoe hare at all grids for each year of the Bonanza Creek Long Term Ecological Research (LTER) Experimental Forest study (1999-2012). Data: Kielland et. al. (2017).
@@ -67,7 +67,7 @@ ggplot(data = juvenile_trap, aes(x = year, y = n)) +
 ```{r, include=FALSE}
 # Use `summary()` to display mean, median, max, and min
 
-summary(juvenile_trap)
+juvenile_trap_summary <- summary(juvenile_trap)
 ```
 
 - The maximum number of juvenile hare trappings occurred in 1999 (n = 126) and the minimum juvenile hare trappings occurred in 2010 (n = 2). The mean hare trappings throughout the entire study was 31.5 and the median was 18.5. Some general trends to note would be that the number of juvenile hare trappings had high variance from year to year. Also, that it's hard to tell for if there were zero hare trappings in 2002 and 2009 or if there were no study conducted. What this graph fails to present is the amount of effort put into each year. For instance, it would make sense if in 2010 only two days resulted in 2 trap counts, but the data would be very different if only 2 trap counts were observed in 365 days of the study. Therefore, going forward, a better way to standardize the juvenile hare population is to calculate the trap count per unit effort.
@@ -79,23 +79,23 @@ summary(juvenile_trap)
 # `select()` desired variables weight, age, and sex, and `filter()` juvenile observations
 
 j_weights_comp <- bonanza_creek %>% 
-  select("weight", "age", "sex", "grid") %>% 
-  filter(age == "j") %>% 
-  mutate(sex = case_when(
+  select("weight", "age", "sex", "grid") %>% #select variables weight, age, sex, and grid
+  filter(age == "j") %>%  #filter only juvenile observations
+  mutate(sex = case_when( #replace sex designations with full names, male and female
     sex %in% "f" ~ "Female",
     sex %in% "m" ~ "Male"))
 
 # plot juvenile hare weight by sex and grid on a geom_beeswarm
 
 ggplot(data = j_weights_comp, aes(x = sex, y = weight)) +
-  geom_beeswarm(aes(color = sex)) +
-  facet_wrap(~grid) +
-  geom_boxplot(fill = NA, width = 0.5, outlier.color = NA) +
-  theme_bw() +
-  labs(x = "Sex",
+  geom_beeswarm(aes(color = sex)) + #select beeswarm plot
+  facet_wrap(~grid) + #facet wrap by grid
+  geom_boxplot(fill = NA, width = 0.5, outlier.color = NA) + #add box end points around the data percentile
+  theme_bw() + #choose theme
+  labs(x = "Sex", #add x, y, and title labels
        y = "Weight (g)",
        title = "Juvenile Male and Female Weight Comparison") +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5)) #center plot title
 ```
 
 **Figure 2**: Male and female snowshoe hare weight (g) observations for three grids (bonds, bonmat, bonrip) in the Bonanza Creek LTER Experimental Forest study. Male (teal) and female (red) indicate individual observations for weight (g) of juvenile snowshoe hares. Box endpoints indicate the 25th and 75th percentile values. Data: Kielland et. al. (2017).
@@ -109,18 +109,18 @@ ggplot(data = j_weights_comp, aes(x = sex, y = weight)) +
 # `summarize()` the mean, sd, and sample size of male and female juvenile hare
 
 j_weight_sex <- bonanza_creek %>% 
-  select("weight", "sex", "age") %>% 
-  filter(age == "j")
+  select("weight", "sex", "age") %>% #select variables weight, sex, and age
+  filter(age == "j") #filter only juvenile observations
 
 # get summary statistics
 
 sex_weight_stat <- j_weight_sex %>% 
-  filter(weight != "NA") %>% 
-  group_by(sex) %>% 
+  filter(weight != "NA") %>% #remove NA weight variables 
+  group_by(sex) %>% #group by male and female
   summarize(
-    mean_weight = mean(weight),
-    sd_weight = sd(weight),
-    sample_size = n())
+    mean_weight = mean(weight), #calculate mean
+    sd_weight = sd(weight), #calculate standard deviation
+    sample_size = n()) #calculate sample size
 
 # visualize data distribution with histogram
 
@@ -151,13 +151,13 @@ sex_weight_stat %>%
 # Run a two sample `t.test()`
 
 m_weight <- j_weight_sex %>% 
-  filter(sex == "m") %>% 
-  pull(weight)
+  filter(sex == "m") %>% #filter only male observations
+  pull(weight) #put male weights into a vector
 
 f_weight <- j_weight_sex %>% 
-  filter(weight != "NA") %>% 
-  filter(sex == "f") %>% 
-  pull(weight)
+  filter(weight != "NA") %>% #remove NA weight observations
+  filter(sex == "f") %>% #filter only female observations
+  pull(weight) #put female weight into a vector
 
 # Two sample t-test
 
@@ -171,7 +171,7 @@ hist(f_weight)
 
 # Run a cohen's.d test to determine effect size
 
-cohen.d(m_weight, f_weight)
+cohen.d_weight <- cohen.d(m_weight, f_weight)
 ```
 
 - On average, the mean weight (grams) of juvenile male snowshoe hares is greater than female snowshoe hares (945.9 $\pm$ 333.2 (n = 163) and 855.4 $\pm$ 292.3 (n = 197), respectively). While the absolute difference between means is 90.5 grams (a 10.0% difference), the difference in means is significant (Welch's two-sample t-test: t(2.7096) = 325.02, p = 0.007), and the effect size is small (Cohen's d = 0.29).
@@ -182,16 +182,16 @@ cohen.d(m_weight, f_weight)
 # Explore the relationship between juvenile Snowshoe hare hind foot length and weight
 
 footlength_weight <- bonanza_creek %>% 
-  select("age", "weight", "hindft") %>% 
-  filter(age == "j")
+  select("age", "weight", "hindft") %>% #select variables age, weight, and hind foot
+  filter(age == "j") #filter only juvenile observations
 
 ggplot(data = footlength_weight, aes(x = hindft, y = weight)) +
-  geom_point(color = "purple4") +
-  labs(x = "Hind Foot Length (mm)", 
+  geom_point(color = "purple4") + #select point plot
+  labs(x = "Hind Foot Length (mm)", #label x, y, and title
        y = "Weight (g)",
        title = "Juvenile Snowshoe Hare Hind Foot Length vs. Weight ")+
-  theme_light() +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme_light() + #choose theme
+  theme(plot.title = element_text(hjust = 0.5)) #center plot title
 ```
 
 **Figure 3**: General relationship between juvenile snowshoe hare hind foot length (mm) and weight (g) from Bonanza Creek LTER Experimental Forest study. Data: Kielland et. al. (2017).
@@ -221,7 +221,7 @@ snowshoe_cor_tidy <- tidy(snowshoe_cor)
 snowshoe_cor_tidy
 ```
 
-```{r}
+```{r, include=FALSE}
 # Plot linear regression model
 
 ggplot(data = footlength_weight, aes(x = hindft, y = weight)) +
@@ -232,21 +232,20 @@ ggplot(data = footlength_weight, aes(x = hindft, y = weight)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-**Figure 4**: A linear regression model of the relationship between juvenile snowshoe hare hind foot length (mm) and weight (g) from Bonanza Creek LTER Experimental Forest study. Linear model summary: $\beta$~1~ = 9.52 g mm^-1^, p < 0.001, R^2^ = 0.30, Pearson's *r* = 0.55) Data: Kielland et. al. (2017).
-
-- Figure 3 shows the general relationship between hind food length and weight of juvenile snowshoe hares. Figure 4 shows that this relationship appears to have a slight linear relationship (p < 0.001, R^2^ = 0.30) with an average slope of $\beta$ = 9.52 g mm^-1^ (i.e., for each one millimeter increase in hind foot length we expect an average increase in hare weight of 9.52 g). The relationship between hind foot length and weight of juvenile Snowshoe hare is moderately, and significantly, positively correlated (Pearson's *r* = 0.55, p < 0.001). However, diagnostic plots (not included in report) reveal that the assumption of homoscedasticity is violated because the data seems to have a heteroscedastic spread of residuals about the model. Even though the linear regression statistics point to a significant and positive linear relationship, the assumptions tells us otherwise, and without checking the assumptions, you could incorrectly interpret your data for something that it's not.  
+- Figure 3 shows the general relationship between hind food length and weight of juvenile snowshoe hares. The relationship appears to be slightly linear but multiple outliers appear as hind foot length increases. A simple linear regression reveals a somewhat linear relationship (p < 0.001, R^2^ = 0.30) with an average slope of $\beta$ = 9.52 g mm^-1^ (i.e., for each one millimeter increase in hind foot length we expect an average increase in hare weight of 9.52 g). The relationship between hind foot length and weight of juvenile Snowshoe hare is moderately, and significantly, positively correlated (Pearson's *r* = 0.55, p < 0.001). However, diagnostic plots (not included in report) reveal that the assumption of homoscedasticity is violated because the data have a heteroscedastic spread of residuals about the model. Even though the linear regression statistics point to a significant and positive linear relationship, the assumptions tell us otherwise, Therefore, I chose not to include the plot containing the linear regression because I did not feel as this was the most responsible way to describe the relationship. 
 
 ## 4. Summary
 
 Exploratory data analysis reveals the following:
 
 - Male snowshoe hare mean weight is greater than female snowshoe hare mean weight at all three grids in the study.
-- Snowshoe hare hind foot length and weight appear to have a significant linear relationship with a slope (expected average increase in weight with a 1 mm incense in hind foot length) of 9.52 g mm^-1^.
-- linear regression diagnostic plots reveal that the homoscedasticity assumption is violated. 
+- Only 30% of variance in snowshoe hare weight is described by hind foot length.
+- Although a slight linear relationship with a slope (expected average increase in weight with a 1 mm incense in hind foot length) of 9.52 g mm^-1^ is found, the violation of the homoscedasticity assumption  prevents us from using hind foot length as a variable to explain a change in weight. 
 
 Next steps:
 
-- Compare hind foot length and weight relationship between grids. 
+- Calculate trap per unit effort for annual hare trap counts.
+- Compare hind foot length and weight relationship between sex and grids. 
 
 ## 5. Citations
 - Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER. 2017. Snowshoe hare physical data in Bonanza Creek Experimental Forest: 1999-Present ver 22. Environmental Data Initiative. https://doi.org/10.6073/pasta/03dce4856d79b91557d8e6ce2cbcdc14
